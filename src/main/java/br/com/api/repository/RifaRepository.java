@@ -7,6 +7,5 @@ import br.com.api.model.Rifa;
 
 @Repository
 public interface RifaRepository extends MongoRepository<Rifa, Integer>{
-	Rifa findRifaById(Integer rifaId);
 
 }
