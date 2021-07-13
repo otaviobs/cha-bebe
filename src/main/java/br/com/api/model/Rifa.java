@@ -1,10 +1,18 @@
 package br.com.api.model;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+import lombok.Data;
+
+@Data
+@Document(collection = "rifa")
 public class Rifa {
 	
 	@Transient
@@ -12,8 +20,15 @@ public class Rifa {
 	
 	@Id
 	private int id;
+	
+	@NotNull(message = "Precisa declarar um valor para nome")
+	@Size(min = 0, max = 150, message = "Máximo 150 caracteres")
 	private String nome;
+	
+	@NotNull(message = "Precisa declarar um valor para número")
+	@Indexed(unique = true)
 	private Integer numero;
+	
 	private String fralda;
 	private Integer status;
 	
