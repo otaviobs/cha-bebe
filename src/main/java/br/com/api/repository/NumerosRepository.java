@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.api.model.Rifa;
+import br.com.api.model.Numeros;
 
 @Repository
-public interface RifaRepository extends MongoRepository<Rifa, Integer>{
+public interface NumerosRepository extends MongoRepository<Numeros, Integer>{
 
-	Optional<Rifa> findByNumero(int numero);
+	Optional<Numeros> findByNumero(int numero);
 
 }

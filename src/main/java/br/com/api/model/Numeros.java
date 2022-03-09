@@ -1,6 +1,5 @@
 package br.com.api.model;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -12,8 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
 @Data
-@Document(collection = "rifa")
-public class Rifa {
+@Document(collection = "numeros")
+public class Numeros {
 	
 	@Transient
 	public static final int SEQUENCE_ID = 1;
@@ -32,10 +31,10 @@ public class Rifa {
 	private String fralda;
 	private Integer status;
 	
-	public Rifa() {
+	public Numeros() {
 	}
 	
-	public Rifa(int id, String nome, Integer numero, String fralda, Integer status) {
+	public Numeros(int id, String nome, Integer numero, String fralda, Integer status) {
 		super();
 		this.id = id;
 		this.nome = nome;

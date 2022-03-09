@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import br.com.api.exception.ResourceDuplicateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,69 +22,73 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.api.exception.ResourceNotFoundException;
-import br.com.api.model.Rifa;
-import br.com.api.repository.RifaRepository;
+import br.com.api.model.Numeros;
+import br.com.api.repository.NumerosRepository;
 import br.com.api.service.SequenceGeneratorService;
 
 @RestController
 @RequestMapping("/api/rifa")
-public class RifaController {
+public class NumerosController {
 
 	@Autowired
-	private RifaRepository repository;
+	private NumerosRepository repository;
 	
 	@Autowired
 	private SequenceGeneratorService sequenceGeneratorService;
 
 	@GetMapping("/numeros")
-	public List<Rifa> getRifas(){
+	public List<Numeros> getNumeros(){
 		return repository.findAll();
 	}
 	
 	@GetMapping("/numeroId/{id}")
-	public ResponseEntity<Rifa> findById(@PathVariable int id)
+	public ResponseEntity<Numeros> findById(@PathVariable int id)
 		throws ResourceNotFoundException{
-		Rifa rifa = repository.findById(id)
+		Numeros numeros = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado o id " + id));
-		return ResponseEntity.ok().body(rifa);
+		return ResponseEntity.ok().body(numeros);
 	}
 	
 	@GetMapping("/procurarNumero/{numero}")
-	public ResponseEntity<Rifa> findByNumber(@PathVariable int numero)
+	public ResponseEntity<Numeros> findByNumber(@PathVariable int numero)
 		throws ResourceNotFoundException{
-		Rifa rifa = repository.findByNumero(numero)
+		Numeros numeros = repository.findByNumero(numero)
 				.orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado o número " + numero));
-		return ResponseEntity.ok().body(rifa);
+		return ResponseEntity.ok().body(numeros);
 	}
 	
 	@PostMapping("/numeros")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Rifa saveRifa(@Valid @RequestBody Rifa rifa) {
-		//return repository.save(rifa);
-		if(rifa.getId()==0)
-			rifa.setId(sequenceGeneratorService.generateSequence(Rifa.SEQUENCE_ID));
+	public Numeros saveRifa(@Valid @RequestBody Numeros numeros) throws ResourceDuplicateException {
+		//return repository.save(numeros);
+		Optional<Numeros> checkNumero = repository.findByNumero(numeros.getNumero());
+		if(!checkNumero.isEmpty())
+			throw new ResourceDuplicateException("O número " + numeros.getNumero() + " já existe!");
+
+		if(numeros.getId()==0)
+			numeros.setId(sequenceGeneratorService.generateSequence(Numeros.SEQUENCE_ID));
 		
-		return repository.save(rifa);
+		return repository.save(numeros);
 	}
 	
 	@PutMapping("/numeros/{id}")
-	public ResponseEntity<Rifa> updateRifa(@PathVariable int id, @Valid @RequestBody Rifa rifaDetails)
+	public ResponseEntity<Numeros> updateRifa(@PathVariable int id, @Valid @RequestBody Numeros numerosDetails)
 		throws ResourceNotFoundException{
-		Rifa rifa = repository.findById(id)
+		Numeros numeros = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado o id " + id));
 		
-		rifa.setNome(rifaDetails.getNome());
-		rifa.setNumero(rifaDetails.getNumero());
-		rifa.setFralda(rifaDetails.getFralda());
-		rifa.setStatus(rifaDetails.getStatus());
+		numeros.setNome(numerosDetails.getNome());
+		numeros.setNumero(numerosDetails.getNumero());
+		numeros.setFralda(numerosDetails.getFralda());
+		numeros.setStatus(numerosDetails.getStatus());
 		
-		final Rifa updatedRifa = repository.save(rifa);
-		return ResponseEntity.ok(updatedRifa);
+		final Numeros updatedNumeros = repository.save(numeros);
+		return ResponseEntity.ok(updatedNumeros);
 	}
 	
 	@DeleteMapping("/numeros/{id}")
-	public Map<String, Boolean> deleteRifa(@PathVariable int id) throws ResourceNotFoundException {
-		Rifa rifa = repository.findById(id)
+	public Map<String, Boolean> deleteNumeros(@PathVariable int id) throws ResourceNotFoundException {
+		Numeros numeros = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado o id " + id));
 		repository.deleteById(id);
 		Map<String, Boolean> response = new HashMap< >();
