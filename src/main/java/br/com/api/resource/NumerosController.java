@@ -62,7 +62,7 @@ public class NumerosController {
 	public Numeros saveRifa(@Valid @RequestBody Numeros numeros) throws ResourceDuplicateException {
 		//return repository.save(numeros);
 		Optional<Numeros> checkNumero = repository.findByNumero(numeros.getNumero());
-		if(!checkNumero.isEmpty())
+		if(checkNumero.isPresent())
 			throw new ResourceDuplicateException("O número " + numeros.getNumero() + " já existe!");
 
 		if(numeros.getId()==0)
